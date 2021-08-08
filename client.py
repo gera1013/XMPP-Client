@@ -1,11 +1,20 @@
-
 import logging
 import slixmpp
 
+
+"""
+Slixmpp client implementation
+"""
 class Client(slixmpp.ClientXMPP):
 
     """
-    Slixmpp client implementation
+    Client initialization. 
+
+    Extends ClientXMPP.
+
+    Arguments:
+        jid -- User's JID for logging in.
+        password -- User's password for logging in.
     """
     def __init__(self, jid, password):
         slixmpp.ClientXMPP.__init__(self, jid, password)

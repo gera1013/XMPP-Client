@@ -1,9 +1,12 @@
+import ssl
 from client import Client
 
 jid = input("JID: ")
 passwd = input("Password: ")
 
 xmpp = Client(jid, passwd)
+
+xmpp.ssl_version = ssl.PROTOCOL_SSLv3
 
 xmpp.register_plugin('xep_0030') # Service Discovery
 xmpp.register_plugin('xep_0004') # Data Forms
