@@ -1,18 +1,36 @@
-import ssl
+import logging
+from getpass import getpass
+from argparse import ArgumentParser
+
 from client import Client
 
-jid = input("JID: ")
-passwd = input("Password: ")
 
-xmpp = Client(jid, passwd)
+if __name__ == '__main__':
+    # setup the command line arguments.
+    parser = ArgumentParser()
 
-xmpp.ssl_version = ssl.PROTOCOL_SSLv3
+    # output verbosity options.
+    parser.add_argument("-q", "--quiet", help="set logging to ERROR",
+                        action="store_const", dest="loglevel",
+                        const=logging.ERROR, default=logging.INFO)
+    parser.add_argument("-d", "--debug", help="set logging to DEBUG",
+                        action="store_const", dest="loglevel",
+                        const=logging.DEBUG, default=logging.INFO)
+    
+    args = parser.parse_args()
 
-xmpp.register_plugin('xep_0030') # Service Discovery
-xmpp.register_plugin('xep_0004') # Data Forms
-xmpp.register_plugin('xep_0060') # PubSub
-xmpp.register_plugin('xep_0199') # XMPP Ping
+    # setup logging.
+    logging.basicConfig(level=args.loglevel,
+                        format='%(levelname)-8s %(message)s')
 
-# Connect to the XMPP server and start processing XMPP stanzas.
-xmpp.connect()
-xmpp.process()
+    jid = input("JID: ")
+    passwd = input("Password: ")
+
+    xmpp = Client(jid, passwd)
+
+    # connect to the XMPP server and start processing XMPP stanzas.
+    xmpp.connect()
+    xmpp.process(forever=False)
+
+    print("HERE")
+    xmpp.disconnect()

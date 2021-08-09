@@ -1,6 +1,7 @@
 import logging
 import slixmpp
 
+from slixmpp.exceptions import IqError, IqTimeout
 
 """
 Slixmpp client implementation
@@ -21,7 +22,15 @@ class Client(slixmpp.ClientXMPP):
 
         # event handlers
         self.add_event_handler("session_start", self.start)
+        self.add_event_handler("register", self.register)
 
+        # pluggins
+        self.register_plugin('xep_0004') # Data Forms
+        self.register_plugin('xep_0030') # Service Discovery
+        self.register_plugin('xep_0060') # PubSub
+        self.register_plugin('xep_0199') # XMPP Ping
+        self.register_plugin('xep_0045') # multi-user chat
+        self.register_plugin('xep_0066') # Out-of-band Data
 
     """
     Process the session_start event.
@@ -34,3 +43,33 @@ class Client(slixmpp.ClientXMPP):
     async def start(self, event):
         self.send_presence()
         await self.get_roster()
+
+
+    """
+    Fill the registration form for adding new users inside a server.
+
+    Basic registration fields (username, password, email)
+
+    Arguments:
+        iq -- Info query of the request.
+    """
+    async def register(self, iq):
+        # infor query for the request
+        resp = self.Iq()
+        resp['type'] = 'set'
+        resp['register']['username'] = self.boundjid.user
+        resp['register']['password'] = self.password
+
+        try:
+            # registration succesful
+            await resp.send()
+            logging.info("New account created for user %s!" % self.boundjid)
+        except IqError as e:
+            # server returns an error
+            logging.error("Could not register account: %s" % e.iq['error']['text'])
+            self.disconnect()
+        except IqTimeout:
+            # connection times out
+            logging.error("No response from server.")
+            self.disconnect()
+
