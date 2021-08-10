@@ -32,5 +32,4 @@ if __name__ == '__main__':
     xmpp.connect()
     xmpp.process(forever=False)
 
-    print("HERE")
     xmpp.disconnect()
