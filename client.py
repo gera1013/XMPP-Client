@@ -181,7 +181,23 @@ class Client(slixmpp.ClientXMPP):
     """
     def user_information(self, jid):
         if jid in self.client_roster.keys():
-            print(self.client_roster)
+            connections = self.client_roster.presence(jid)
+
+            if connections:
+                # output each resource and its availability
+                for res, pres in connections.items():
+                    show = 'available'
+                    status = '-'
+                    
+                    if pres['show']:
+                        show = pres['show']
+
+                    if pres['status']:
+                        status = pres['status']
+                    
+                    print('   - %s (%s) (%s)' % (res, show, status))
+            else:
+                print('   - OFFLINE')
 
         else:
             logging.error("No user found with the specified JID")
