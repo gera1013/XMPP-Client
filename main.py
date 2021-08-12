@@ -36,12 +36,11 @@ if __name__ == '__main__':
 
     # initialize the client
     xmpp = Client(jid, passwd, mode=option)
+    xmpp['xep_0077'].force_registration = True
 
     # connect to the XMPP server and start processing XMPP stanzas.
     xmpp.connect()
     xmpp.process(forever=False)
 
     # disconnect client (log out)
-    # xmpp.disconnect()
-
     quit()

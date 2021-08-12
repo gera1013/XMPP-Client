@@ -25,6 +25,35 @@ requests_menu = """
 3. SHOW ROSTER
 4. SEND MESSAGE
 5. CHANGE STATUS
-6. CONTACT DETAILS
-7. LOG OUT
+6. ADD CONTACT
+7. CONTACT DETAILS
+8. LOG OUT
 >> """
+
+request_recipient = """
+>> TO: """
+
+body = """>> MESSAGE: """
+
+roster_header = """
+*******************************
+*           CONTACTS          *
+*******************************"""
+
+request_show = """
+1. Chat
+2. Away
+3. DND
+>> """
+
+request_status = """
+>> STATUS: """
+
+request_username = """
+>> USERNAME: """
+
+show_dict = {
+    1: 'chat',
+    2: 'away',
+    3: 'dnd'
+}
