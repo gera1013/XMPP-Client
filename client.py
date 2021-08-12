@@ -109,6 +109,20 @@ class Client(slixmpp.ClientXMPP):
 
 
     """
+    Process the incoming message stanzas from the server.
+
+    Outputs the message body to the user via command line.
+
+    Arguments:
+        msg -- Message stanza recieved from the server
+    """
+    def message(self, msg):
+        if msg['type'] in ('chat', 'normal'):
+            print("[%s] %s" % msg['from'], msg['message']['body'])
+            # msg.reply("Thanks for sending\n%(body)s" % msg).send()
+    
+
+    """
     Function for listening to client requests from the commando line.
 
     Reads input from the clients given a menu with the clients functionalities.
