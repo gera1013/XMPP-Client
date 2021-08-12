@@ -3,6 +3,9 @@ import slixmpp
 import asyncio
 import aioconsole
 
+from pynput import keyboard
+from threading import Thread
+
 from slixmpp.exceptions import IqError, IqTimeout
 
 from util import *
@@ -42,8 +45,8 @@ class Client(slixmpp.ClientXMPP):
         self.register_plugin('xep_0199') # XMPP Ping
         self.register_plugin('xep_0045') # multi-user chat
         self.register_plugin('xep_0066') # Out-of-band Data
-        # notifications 0085
-        # notifications 0363
+        self.register_plugin('xep_0085') # notifications
+        self.register_plugin('xep_0363') # files
 
 
     """
@@ -158,7 +161,7 @@ class Client(slixmpp.ClientXMPP):
                     # output each resource and its availability
                     for res, pres in connections.items():
                         show = 'available'
-                        status = 'no status'
+                        status = '-'
                         
                         if pres['show']:
                             show = pres['show']
@@ -204,6 +207,21 @@ class Client(slixmpp.ClientXMPP):
 
 
     """
+    Process and send the chat state notifications.
+
+    Sends active, composing, and inactive statuses depending on what the user is doing
+
+    Arguments:
+        recipient -- user whit whom communication is being established
+        status -- status to send (active, composing, inactive) 
+    """
+    def chat_state_notifications(self, recipient, status):
+        state_notification = self.Message()
+        state_notification["to"] = recipient
+        state_notification["chat_state"] = status
+        state_notification.send()
+
+    """
     Function for listening to client requests from the commando line.
 
     Reads input from the clients given a menu with the clients functionalities.
@@ -230,7 +248,13 @@ class Client(slixmpp.ClientXMPP):
 
             elif x == 4:
                 recipient = await aioconsole.ainput(request_recipient)
+                
+                self.chat_state_notifications(recipient, "composing")
+
                 message = await aioconsole.ainput(body)
+
+                self.chat_state_notifications(recipient, "inactive")
+
                 self.send_message(mto=recipient,
                     mbody=message,
                     mtype='chat'
