@@ -52,6 +52,9 @@ request_status = """
 request_username = """
 >> USERNAME: """
 
+request_filename = """
+>> FILENAME: """
+
 show_dict = {
     1: 'chat',
     2: 'away',

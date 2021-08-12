@@ -3,7 +3,6 @@ import slixmpp
 import asyncio
 import aioconsole
 
-from pynput import keyboard
 from threading import Thread
 
 from slixmpp.exceptions import IqError, IqTimeout
@@ -47,6 +46,8 @@ class Client(slixmpp.ClientXMPP):
         self.register_plugin('xep_0066') # Out-of-band Data
         self.register_plugin('xep_0085') # notifications
         self.register_plugin('xep_0363') # files
+        self.register_plugin('xep_0071') # needed for files
+        self.register_plugin('xep_0128') # needed for files
 
 
     """
@@ -205,6 +206,33 @@ class Client(slixmpp.ClientXMPP):
         else:
             logging.error("No user found with the specified JID")
 
+    
+    """
+    Process incoming files.
+
+    Arguments
+        filename -- name of the file to be sent
+        recipient -- user whom will receive the file
+    """
+    async def file_upload(self, filename, recipient):
+        try:
+            url = await self['xep_0363'].upload_file(
+                filename, domain="alumchat.xyz", timeout=10
+            )
+        except IqTimeout:
+            raise TimeoutError('Could not send message in time')
+        
+        logging.info('Upload successful!')
+
+        html = (
+            f'<body xmlns="http://www.w3.org/1999/xhtml">'
+            f'<a href="{url}">{url}</a></body>'
+        )
+
+        message = self.make_message(mto=recipient, mbody=url, mhtml=html)
+        message['oob']['url'] = url
+        message.send()
+
 
     """
     Process and send the chat state notifications.
@@ -238,7 +266,10 @@ class Client(slixmpp.ClientXMPP):
                 logging.ERROR("Option invalid, choose a valid one")
 
             if x == 1:
-                pass
+                fname = await aioconsole.ainput(request_filename)
+                rec = await aioconsole.ainput(request_recipient)
+
+                await self.file_upload(fname, rec)
 
             elif x == 2:
                 pass
