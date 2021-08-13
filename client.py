@@ -35,6 +35,8 @@ class Client(slixmpp.ClientXMPP):
             self.add_event_handler("session_start", self.listen_client_requests)
             self.add_event_handler("failed_auth", self.failed_authentication)
             self.add_event_handler("message", self.message_handling)
+            self.add_event_handler("groupchat_message", self.gc_message_handling)
+            self.add_event_handler("groupchat_invite", self.join_muc_room)
 
         # pluggins
         self.register_plugin('xep_0004') # Data Forms
@@ -128,6 +130,28 @@ class Client(slixmpp.ClientXMPP):
     def message_handling(self, msg):
         if msg['type'] in ('chat', 'normal'):
             print("[", msg['from'], "] ", msg['body'])
+
+
+    """
+    Process the incoming message stanzas from the server that come from a multi-user chat.
+
+    Outputs the message body to the user via command line.
+
+    Arguments:
+        msg -- Message stanza recieved from the server
+    """
+    def gc_message_handling(self, msg):
+        print("[", msg['from'], "] ", "[", msg['mucnick'], "] ", msg['body'])
+
+
+    """
+    Process the group chat invitations and joins the rooms.
+
+    Arguments
+         -- The room's name
+    """
+    def join_muc_room(self, room, nick):
+        self.plugin['xep_0045'].join_muc(room, nick)
 
 
     """
@@ -268,29 +292,38 @@ class Client(slixmpp.ClientXMPP):
                 logging.ERROR("Option invalid, choose a valid one")
 
             if x == 1:
-                fname = await aioconsole.ainput(request_filename)
                 rec = await aioconsole.ainput(request_recipient)
+                fname = await aioconsole.ainput(request_filename)
 
                 await self.file_upload(fname, rec)
 
             elif x == 2:
-                pass
+                group_name = await aioconsole.ainput(request_group_name)
+                nick = await aioconsole.ainput(request_nickname)
+
+                self.join_muc_room(group_name, nick)
+
+                print("Succesfully joined the group %s!" % group_name)
 
             elif x == 3:
                 self.show_roster()
 
             elif x == 4:
                 recipient = await aioconsole.ainput(request_recipient)
+                mtype = 'groupchat'
                 
-                self.chat_state_notifications(recipient, "composing")
-
+                if "conference" not in recipient:
+                    mtype = 'chat'
+                    self.chat_state_notifications(recipient, "composing") 
+                
                 message = await aioconsole.ainput(body)
 
-                self.chat_state_notifications(recipient, "inactive")
+                if "conference" not in recipient:
+                    self.chat_state_notifications(recipient, "inactive")
 
                 self.send_message(mto=recipient,
                     mbody=message,
-                    mtype='chat'
+                    mtype=mtype
                 )
 
             elif x == 5:

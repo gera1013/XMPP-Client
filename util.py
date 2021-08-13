@@ -21,7 +21,7 @@ requests_menu = """
 *           OPTIONS           *
 *******************************
 1. SEND FILE
-2. GROUP CHAT
+2. JOIN GROUP CHAT
 3. SHOW ROSTER
 4. SEND MESSAGE
 5. CHANGE STATUS
@@ -53,8 +53,12 @@ request_status = """
 request_username = """
 >> USERNAME: """
 
-request_filename = """
->> FILENAME: """
+request_filename = """>> FILENAME: """
+
+request_group_name = """
+>> GROUP NAME: """
+
+request_nickname = """>> NICKNAME: """
 
 show_dict = {
     1: 'chat',
