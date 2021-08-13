@@ -1,9 +1,9 @@
 # XMPP-Client
-Client implementing existing protocol
+Client implementing the existing XMPP protocol
 
 ## Installation
 * Open terminal and run command (using pip) <pre> pip install -r requirements.txt</pre>
-* After the libraries are installed, run <pre> python main.py </pre> to start the client
+* After the libraries are installed, to start the client run <pre> python main.py </pre> 
 
 ## Functionalities
 The implementation is capable of the following
@@ -17,3 +17,8 @@ The implementation is capable of the following
 * Presence and status changes
 * Chat status notifications
 * Removing an existing account
+
+## File description
+* `main.py` file with the main program. Creates Client object and does basic I/O operations
+* `client.py` file with the client module. Contains the class Client and implements the mentioned functionalities
+* `util.py` file with utilities. Text formatting, functions and imports.
