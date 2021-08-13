@@ -84,6 +84,34 @@ class Client(slixmpp.ClientXMPP):
 
 
     """
+    Unregister the current account from the server.
+
+    Arguments:
+        None
+    """
+    async def remove_account(self):
+        # info query for the request
+        resp = self.Iq()
+
+        resp['type'] = 'set'
+        resp['register']['register'] = True
+
+        try:
+            # registration succesful
+            await resp.send()
+            print("Account removed succesfully" % self.boundjid)
+            self.disconnect()
+        except IqError as e:
+            # server returns an error
+            logging.error("Could not remove account: %s" % e.iq['error']['text'])
+            self.disconnect()
+        except IqTimeout:
+            # connection times out
+            logging.error("No response from server.")
+            self.disconnect()
+
+
+    """
     Process the session_start event.
 
     Sends clients presence and receives de roster as confirmation.
@@ -344,8 +372,9 @@ class Client(slixmpp.ClientXMPP):
 
             elif x == 8:
                 pass
+
             elif x == 9:
-                logging.info("Logging out...")
+                print("Logging out...")
 
                 self.disconnect()
 
