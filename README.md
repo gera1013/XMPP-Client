@@ -19,6 +19,7 @@ The implementation is capable of the following
 * Removing an existing account
 
 ## File description
-* `main.py` file with the main program. Creates Client object and does basic I/O operations
-* `client.py` file with the client module. Contains the class Client and implements the mentioned functionalities
-* `util.py` file with utilities. Text formatting, functions and imports.
+* `main.py` file with the main program, creates Client object and does basic I/O operations
+* `client.py` file with the client module, contains the class Client and implements the mentioned functionalities
+* `util.py` file with utilities. Text formatting, functions and imports
+* `requirements.txt` file with all the needed python libraries
