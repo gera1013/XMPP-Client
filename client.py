@@ -1,3 +1,4 @@
+import sys
 import logging
 import slixmpp
 import asyncio
@@ -381,5 +382,3 @@ class Client(slixmpp.ClientXMPP):
                 break
             else:
                 logging.ERROR("Option invalid, choose a valid one")
-
-        quit()

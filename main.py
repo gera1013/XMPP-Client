@@ -1,3 +1,4 @@
+import sys
 import logging
 from getpass import getpass
 from argparse import ArgumentParser
@@ -43,4 +44,4 @@ if __name__ == '__main__':
     xmpp.process(forever=False)
 
     # disconnect client (log out)
-    quit()
+    sys.exit()
