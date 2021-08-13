@@ -32,12 +32,13 @@ class Client(slixmpp.ClientXMPP):
         if mode == 1:
             self.add_event_handler("register", self.register) # only in the event of registry 
         else:
-            self.add_event_handler("session_start", self.start)
-            self.add_event_handler("session_start", self.listen_client_requests)
-            self.add_event_handler("failed_auth", self.failed_authentication)
-            self.add_event_handler("message", self.message_handling)
-            self.add_event_handler("groupchat_message", self.gc_message_handling)
-            self.add_event_handler("groupchat_invite", self.join_muc_room)
+            self.add_event_handler("session_start", self.start) # session start
+            self.add_event_handler("session_start", self.listen_client_requests) # loop for client requests
+            self.add_event_handler("failed_auth", self.failed_authentication) # in case the login fails
+            self.add_event_handler("message", self.message_handling) # handle incoming messages
+            self.add_event_handler("groupchat_message", self.gc_message_handling) # handle incoming group messages
+            self.add_event_handler("groupchat_invite", self.join_muc_room) # handle muc room invitations
+            self.add_event_handler("chatstate_composing", self.handle_composing) # handle chat status notification 'composing'
 
         # pluggins
         self.register_plugin('xep_0004') # Data Forms
@@ -158,7 +159,7 @@ class Client(slixmpp.ClientXMPP):
     """
     def message_handling(self, msg):
         if msg['type'] in ('chat', 'normal'):
-            print("[", msg['from'], "] ", msg['body'])
+            print("[", msg['from'].bare, "] ", msg['body'])
 
 
     """
@@ -170,7 +171,7 @@ class Client(slixmpp.ClientXMPP):
         msg -- Message stanza recieved from the server
     """
     def gc_message_handling(self, msg):
-        print("[", msg['from'], "] ", "[", msg['mucnick'], "] ", msg['body'])
+        print("[", msg['from'].bare, "] ", "[", msg['mucnick'], "] ", msg['body'])
 
 
     """
@@ -303,6 +304,19 @@ class Client(slixmpp.ClientXMPP):
         state_notification["to"] = recipient
         state_notification["chat_state"] = status
         state_notification.send()
+
+    
+    """
+    Process the incoming chat status notifications.
+
+    Output the state of chats in console.
+
+    Arguments:
+        stanza -- stanza received
+    """
+    def handle_composing(self, state):
+        print(state['from'].bare, " is typing...")
+
 
     """
     Function for listening to client requests from the commando line.
