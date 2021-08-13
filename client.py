@@ -30,12 +30,12 @@ class Client(slixmpp.ClientXMPP):
         # event handlers
         if mode == 1:
             self.add_event_handler("register", self.register) # only in the event of registry 
+        else:
+            self.add_event_handler("session_start", self.start)
+            self.add_event_handler("session_start", self.listen_client_requests)
+            self.add_event_handler("failed_auth", self.failed_authentication)
+            self.add_event_handler("message", self.message_handling)
 
-        self.add_event_handler("session_start", self.start)
-        self.add_event_handler("session_start", self.listen_client_requests)
-        self.add_event_handler("failed_auth", self.failed_authentication)
-        self.add_event_handler("message", self.message_handling)
-        
         # pluggins
         self.register_plugin('xep_0004') # Data Forms
         self.register_plugin('xep_0030') # Service Discovery
@@ -69,7 +69,7 @@ class Client(slixmpp.ClientXMPP):
         try:
             # registration succesful
             await resp.send()
-            logging.info("New account created for user %s! Now you can login with this user." % self.boundjid)
+            print("New account created for user %s! Now you can login with this user." % self.boundjid)
             self.disconnect()
         except IqError as e:
             # server returns an error
@@ -90,10 +90,12 @@ class Client(slixmpp.ClientXMPP):
         event -- An empty dictionary.
     """
     async def start(self, event):
-        logging.info("Establishing connection...")
+        print("\nEstablishing connection...")
 
         # send presence to server (required)
         self.send_presence()
+        
+        print("\nClient connected!")
 
         # get roster of other clients
         await self.get_roster()
@@ -161,7 +163,7 @@ class Client(slixmpp.ClientXMPP):
                 if connections:
                     # output each resource and its availability
                     for res, pres in connections.items():
-                        show = 'available'
+                        show = 'chat'
                         status = '-'
                         
                         if pres['show']:
@@ -190,7 +192,7 @@ class Client(slixmpp.ClientXMPP):
             if connections:
                 # output each resource and its availability
                 for res, pres in connections.items():
-                    show = 'available'
+                    show = 'chat'
                     status = '-'
                     
                     if pres['show']:
@@ -204,7 +206,7 @@ class Client(slixmpp.ClientXMPP):
                 print('   - OFFLINE')
 
         else:
-            logging.error("No user found with the specified JID")
+            logging.error("No user found in contacts with the specified JID")
 
     
     """
@@ -308,8 +310,14 @@ class Client(slixmpp.ClientXMPP):
                 self.user_information(jid)
 
             elif x == 8:
+                pass
+            elif x == 9:
                 logging.info("Logging out...")
 
                 self.disconnect()
+
+                break
             else:
                 logging.ERROR("Option invalid, choose a valid one")
+
+        quit()

@@ -24,7 +24,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # setup logging.
-    logging.basicConfig(level=args.loglevel,
+    logging.basicConfig(level=logging.ERROR,
                         format='%(levelname)-8s %(message)s')
 
     # ask for the intended options

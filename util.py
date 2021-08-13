@@ -27,7 +27,8 @@ requests_menu = """
 5. CHANGE STATUS
 6. ADD CONTACT
 7. CONTACT DETAILS
-8. LOG OUT
+8. UNREGISTER ACCOUNT
+9. LOG OUT
 >> """
 
 request_recipient = """
