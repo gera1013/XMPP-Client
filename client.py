@@ -96,12 +96,12 @@ class Client(slixmpp.ClientXMPP):
         resp = self.Iq()
 
         resp['type'] = 'set'
-        resp['register']['register'] = True
+        resp['register']['remove'] = True
 
         try:
             # registration succesful
             await resp.send()
-            print("Account removed succesfully" % self.boundjid)
+            print("Account removed succesfully")
             self.disconnect()
         except IqError as e:
             # server returns an error
@@ -386,7 +386,7 @@ class Client(slixmpp.ClientXMPP):
                 self.user_information(jid)
 
             elif x == 8:
-                self.remove_account()
+                await self.remove_account()
 
             elif x == 9:
                 print("Logging out...")
