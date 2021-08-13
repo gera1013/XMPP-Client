@@ -371,7 +371,7 @@ class Client(slixmpp.ClientXMPP):
                 self.user_information(jid)
 
             elif x == 8:
-                pass
+                self.remove_account()
 
             elif x == 9:
                 print("Logging out...")
