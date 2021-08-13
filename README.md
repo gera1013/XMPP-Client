@@ -8,12 +8,12 @@ Client implementing the existing XMPP protocol
 ## Functionalities
 The implementation is capable of the following
 * Account registration
-* Logging in and out of the client
+* Logging in and out of the server
 * Sending and receiveng files
 * Multi-user chat room
 * 1-to-1 message communication
-* View the client's roster
-* Add contacts to the client's roster
+* Client's roster visualization
+* Adding contacts to the client's roster
 * Presence and status changes
 * Chat status notifications
 * Removing an existing account
